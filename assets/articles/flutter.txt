@@ -1,0 +1,1002 @@
+Flutter — это фреймворк с открытым исходным кодом от Google для 
+мультиплатформенных приложений, который позволяет собрать приложение для 
+разных платформ, не модифицируя код проекта. Flutter поддерживает 
+платформы Android, iOS, Linux, macOS, Windows, Web.
+
+По результатам работ, начатых в 2022 году, поддержка Flutter добавлена в 
+ОС Аврора версии 4.0.2.269. Для разработки приложений опубликован Flutter 
+SDK, включающий версию Flutter 3.3.10 и Dart 2.18.6.
+
+Flutter SDK
+В состав Flutter SDK включены:
+
+Документация по установке и использованию.
+
+Платформо‑зависимые (требующие реализации под конкретную платформу) 
+плагины.
+
+Приложение «Flutter example packages», демонстрирующее работу плагинов.
+
+Приложение «Fluttery ToDo» портированное на ОС Аврора.
+
+Flutter SDK для ОС Аврора не входит в upstream, и платформа Аврора не 
+доступна в официальной сборке Flutter. Поэтому установка происходит 
+особенным методом. Подробную документацию можно найти здесь здесь.
+
+Для поддержки ОС Аврора мы разрабатываем плагины. Приложение «Flutter 
+example packages» демонстрирует их работу. На данный момент доступно 
+двенадцать платформо‑зависимых плагинов для ОС Аврора. В приложении также 
+проводится проверка платформо‑независимых пакетов на совместимость. 
+Платформо‑независимые пакеты не требуют специальной доработки под 
+платформу, однако они зависят от версии Flutter и Dart, и имеют 
+зависимости, которые могут конфликтовать между собой. Последний, 
+актуальный, список доступен по ссылке.
+
+Flutter example packages
+Flutter example packages
+Приложение «Fluttery ToDo» демонстрирует работу платформо-зависимых 
+пакетов
+(path_provider и sqflite), которые были портированы на платформу ОС 
+Аврора.
+
+Fluttery ToDo
+Fluttery ToDo
+На данный момент поддерживается сборка только под архитектуру armv7hl, 
+таким образом поддержка эмулятора пока недоступна.
+
+Настройка среды для работы с Flutter SDK
+Для настройки рабочего места следует выполнить следующие шаги:
+
+Установить Flutter SDK
+
+Установить Platform SDK
+
+Установка пакетов для работы Flutter
+
+Установка Flutter SDK
+Стабильная работа Flutter SDK проверена на Linux и Windows, с 
+использованием WSL2.
+
+Установка Flutter SDK производится на локальную систему, так же как и 
+обычный Flutter.
+
+Следующий набор команд приведён для Ubuntu 22.04.
+
+В первую очередь стоит установить пакеты для работы с curl, git и zip:
+
+$ sudo apt-get install curl git git-lfs unzip bzip2
+Далее следует создать директорию, в которую будет установлен Flutter SDK:
+
+$ mkdir -p ~/.local/opt
+Затем клонировать репозиторий Flutter с поддержкой платформы ОС Аврора в 
+созданную папку и создать alias, через который можно будет обратиться к 
+установленному Flutter SDK:
+
+$ git clone https://gitlab.com/omprussia/flutter/flutter.git 
+~/.local/opt/flutter
+
+$ echo "alias flutter-aurora=$HOME/.local/opt/flutter/bin/flutter" >> 
+~/.bashrc
+
+$ exec bash  
+Настроить во Flutter SDK платформу ОС Аврора, для которой будут 
+установлены все необходимые зависимости для работы Flutter:
+
+$ flutter-aurora config --enable-aurora
+Выполнить команду doctor и проследовать её инструкциям, чтобы настроить 
+окружение для сборки приложений под ОС Аврора.
+
+$ flutter-aurora doctor
+Установка Platform SDK
+Для сборки приложений на Flutter используется Platform SDK. Установку 
+Platform SDK следует выполнить по (инструкции). Для работы Platform SDK 
+необходимы права суперпользователя. Так как сборка выполняется в консоли, 
+не всегда удобно каждый раз вводить пароль вручную. Для решения этой 
+проблемы нужно добавить следующие файлы в директорию /etc/sudoers.d, они 
+позволят работать с Platform SDK без ввода пароля суперпользователя.
+
+Вместо <USERNAME> необходимо указать имя текущего пользователя.
+
+Файл /etc/sudoers.d/mer-sdk-chroot:
+
+<USERNAME> ALL=(ALL) NOPASSWD: 
+/home/<USERNAME>/AuroraPlatformSDK/sdks/aurora_psdk/mer-sdk-chroot  
+Defaults!/home/<USERNAME>/AuroraPlatformSDK/sdks/aurora_psdk/mer-sdk-chroot 
+env_keep += "SSH_AGENT_PID SSH_AUTH_SOCK"  
+Файл /etc/sudoers.d/sdk-chroot:
+
+<USERNAME> ALL=(ALL) NOPASSWD: 
+/home/<USERNAME>/AuroraPlatformSDK/sdks/aurora_psdk/sdk-chroot  
+Defaults!/home/<USERNAME>/AuroraPlatformSDK/sdks/aurora_psdk/sdk-chroot 
+env_keep += "SSH_AGENT_PID SSH_AUTH_SOCK"  
+Либо перед использованием Flutter SDK единожды нужно выполнить любую 
+команду, использующую sudo, чтобы в текущей терминальной сессии больше не 
+запрашивался пароль суперпользователя:
+
+$ sudo echo 'Run doctor' && flutter-aurora doctor
+Установка пакетов для работы Flutter
+Для сборки приложения Flutter требуются зависимости, которые нужно 
+добавить в Platform SDK. Необходимые пакеты находятся в клонированном 
+репозитории Flutter по пути <flutter>/bin/cache/artifacts/aurora/arm.
+
+Для установки зависимостей требуется определить название armv7hl таргета. 
+Получить полное название таргета можно следующей командой:
+
+$ aurora_psdk sdk-assistant list 
+
+AuroraOS-4.0.2.89-base  
+├─AuroraOS-4.0.2.89-base-aarch64  
+├─AuroraOS-4.0.2.89-base-armv7hl <- <TARGET>  
+└─AuroraOS-4.0.2.89-base-i486  
+Установить таргет по умолчанию можно с помощью команды:
+
+$ aurora_psdk sb2-config -d <TARGET>
+где <TARGET> — полное наименование таргета, например, 
+AuroraOS-4.0.2.89-base-armv7hl.
+
+Далее, следует перейти в директорию с пакетами и установить зависимости. 
+При конфликте хешей их нужно проигнорировать, выбрав (i):
+
+$ cd ~/.local/opt/flutter/bin/cache/artifacts/aurora/arm  
+ 
+# Для Аврора 4.0.2 установить пакеты совместимости  
+$ aurora_psdk sb2 -t <TARGET> -m sdk-install -R zypper in 
+platform-sdk/compatibility/*.rpm  
+
+# Установить необходимые пакеты  
+$ aurora_psdk sb2 -t <TARGET> -m sdk-install -R zypper in 
+platform-sdk/*.rpm  
+  
+# Очистить снимки armv7hl таргета  
+$ aurora_psdk sdk-assistant target remove --snapshots-of <TARGET>  
+ОС Аврора требует также установки дополнительных пакетов, которые 
+находятся в установленном Flutter SDK по пути 
+<flutter>/bin/cache/artifacts/aurora/arm/device/compatibility.
+
+В следующих версиях эта зависимость будет стоять по умолчанию, но на 
+данный момент её нужно установить вручную. Для этого нужно загрузить на 
+телефон пакеты и установить на устройстве с помощью следующей команды:
+
+$ devel-su pkcon install-local *.rpm -y
+Приложение Hello World
+Для ОС Аврора доступны следующие шаблоны проектов:
+
+app — приложение;
+
+plugin — Platform Channel плагин;
+
+plugin_ffi — FFI плагин.
+
+Для создания проекта приложения нужно выполнить следующую команду, указав 
+шаблон, название организации и название проекта:
+
+$ flutter-aurora create --platforms=aurora --template=app --org=<ORG_NAME> 
+<APPNAME>
+где <ORG_NAME> — название организации, <APPNAME> — название приложения. 
+Данная команда генерирует базовый пример Flutter приложения с настроенным 
+окружением для сборки под ОС Аврора. Структура файлов и каталогов проекта 
+имеет следующий вид:
+
+├── analysis_options.yaml
+├── aurora
+│   ├── CMakeLists.txt
+│   ├── desktop
+│   │   └── com.hello.world.desktop
+│   ├── flutter
+│   │   ├── generated_plugin_registrant.cpp
+│   │   ├── generated_plugin_registrant.h
+│   │   └── generated_plugins.cmake
+│   ├── icons
+│   │   ├── 108x108.png
+│   │   ├── 128x128.png
+│   │   ├── 172x172.png
+│   │   └── 86x86.png
+│   ├── main.cpp
+│   └── rpm
+│       └── com.hello.world.spec
+├── lib
+│   └── main.dart
+├── pubspec.lock
+├── pubspec.yaml
+├── README.md
+└── world.iml
+Описание и лицензия проекта настраивается в файле 
+<project>/aurora/rpm/<ORGNAME>.<APPNAME>.spec.
+
+Название проекта, которое будет отображаться в сетке приложений, описание 
+проекта и список разрешений, необходимых для работы приложения, можно 
+указать в файле <project>/aurora/desktop/<ORGNAME>.<APPNAME>.desktop.
+
+Иконки приложения находятся в папке <project>/aurora/icons.
+
+Всё остальное стандартно для Flutter приложений. Далее можно приступить к 
+созданию платформо-зависимых пакетов для платформы ОС Аврора и подключить 
+к этому приложению.
+
+Пакеты Dart
+Пакеты Dart делят на три основных типа:
+
+Dart package — пакет написанный на Dart, например, package path. Такие 
+пакеты могут содержать специфичные для Flutter функции и иметь зависимость 
+от инфраструктуры Flutter, ограничивая их использование только Flutter, 
+например, package fluro.
+
+Plugin package — специализированный пакет Dart, содержащий API, написанный 
+на Dart, в сочетании с одной или несколькими реализациями для конкретной 
+платформы. Пакеты плагинов могут быть написаны для Android (с 
+использованием Kotlin или Java), ОС Аврора (с использование С++), iOS (с 
+использованием Swift или Objective‑C), Интернета, macOS, Windows или Linux 
+или любой их комбинации.
+
+FFI Plugin package — специализированный пакет Dart, содержащий API, 
+написанный на Dart, с одной или несколькими реализациями для конкретной 
+платформы, использующими Dart FFI.
+
+Пакеты Dart можно разделить на два основных вида:
+
+Платформо‑независимые — Пакеты, написанные на Dart, не имеющие реализаций 
+под конкретные платформы и не имеющие таких зависимостей. Такие плагины не 
+требует модификаций для платформы, но зависят от версии Flutter и Dart, 
+которые фиксированы для ОС Аврора.
+
+Платформо‑зависимые — Пакеты с реализацией для конкретных платформ или 
+содержащие в зависимостях такие пакеты. Требуют реализации плагина для 
+платформы ОС Аврора.
+
+Подготовка пакета
+Пакет Dart в минимальном виде состоит из файла pubspec.yaml, папки lib с 
+как минимум одним файлом <package-name>.dart. Создать пакет можно 
+командой:
+
+$ flutter-aurora create --template=package <package-name>
+Таким образом создается платформо-независимый плагин «Dart package». Для 
+создания платформо-зависимых типов плагинов нужно указать тип plugin — 
+Plugin package или plugin_ffi — FFI Plugin package:
+
+# Plugin package
+$ flutter-aurora create --template=plugin --platforms=aurora 
+<package-name>
+
+# FFI Plugin package
+$ flutter-aurora create --template=plugin_ffi --platforms=aurora 
+<package-name>
+Реализовать платформо-зависимый плагин для ОС Аврора можно любым из трёх 
+видов пакетов, что отражено в демонстрационном пакете flutter_device. 
+Пакет выполняет одну задачу — получить от системы название модели 
+устройства. Она выполняется для платформы ОС Аврора с помощью D-Bus 
+интерфейса тремя типами плагинов (Dart package, Plugin package, FFI Plugin 
+package). Также пакет flutter_device имеет реализацию платформы Android 
+для демонстрации работы различных платформ в одном пакете.
+
+Все платформо‑зависимые компоненты можно реализовать в одном пакете, но в 
+таком случае будет закрыта возможность без вмешательства в код добавить 
+недостающую реализацию неподдерживаемой платформы. Если подобное 
+ограничение не является целью, верным решением будет создать 
+платформ-интерфейс и общий-пакет, к которому в свою очередь будут 
+подключаться платформо‑зависимые пакеты. Это позволит добавить платформу, 
+которой нет в upstream пакета, подключив пакет реализующий 
+платформ-интерфейс пакета в зависимости проекта.
+
+Платформ‑интерфейс — Базовый класс для интерфейсов платформы. 
+Предоставляет статический вспомогательный метод для обеспечения реализации 
+интерфейсов платформы.
+
+Общий‑пакет — Базовый класс для плагинов пакета. Позволяет в зависимости 
+от платформы автоматически установить нужную реализацию для платформы при 
+сборке, используя один интерфейс плагина в проекте.
+
+Структура директорий демонстрационного проекта demo-flutter-packages
+
+├── device_platform_interface
+├── flutter_device
+├── hello_world
+└── packages
+    ├── android
+    │   └── plugin_device_android
+    └── aurora
+        ├── dart_package_device
+        ├── ffi_plugin_device
+        └── plugin_device
+device_platform_interface — платформ-интерфейс, помогает объединить 
+различные платформы в одном плагине для удобства его использования в 
+проектах.
+
+flutter_device — общий-пакет, используется в проектах и объединяет все 
+платформо‑зависимые плагины.
+
+plugin_device_android — плагин для платформы Android, получающий модель 
+устройства с помощью объекта Build.
+
+dart_package_device — пакет, в зависимостях которого есть 
+платформо‑зависимый пакет dbus, выполняющий запрос на получение модели 
+устройства.
+
+plugin_device — плагин для платформы ОС Аврора, применяющий Qt D‑Bus для 
+получения модели устройства.
+
+hello_world — приложение Flutter созданное ранее.
+
+ffi_plugin_device — FFI‑плагин для платформы ОС Аврора, который позволяет 
+получить модель устройства с помощью Dart FFI и Qt D‑Bus.
+
+Детальней изучить проект можно в открытом репозитории 
+demo-flutter-packages. Там можно найти все пакеты рассмотренные в той 
+статье.
+
+Платформ-интерфейс (device_platform_interface)
+Платформ‑интерфейс device_platform_interface — пакет с типом «Dart 
+package», который содержит интерфейс для платформо‑зависимых плагинов, 
+реализующий PlatformInterface. Задача этого пакета — предоставить 
+интерфейс, реализуя который можно добавить платформо‑зависимую часть к 
+общему пакету.
+
+Структура пакета device_platform_interface
+
+└── device_platform_interface
+    ├── lib
+    │   └── device_platform_interface.dart
+    └── pubspec.yaml
+Файл device_platform_interface/lib/device_platform_interface.dart:
+
+/// Классы, которые будут реализовать платформо-зависимые пакеты
+abstract class DevicePlatform extends PlatformInterface {
+  /// Конструктор PlatformInterface
+  DevicePlatform() : super(token: _token);
+
+  /// Токен по умолчанию
+  static final Object _token = Object();
+
+  /// Реализация пакета
+  static DevicePlatform? _instance;
+
+  /// Публичная переменная для получения пакета
+  static DevicePlatform get instance => _instance!;
+
+  /// Метод инициализации платформо-зависимого пакета
+  static set instance(DevicePlatform instance) {
+    PlatformInterface.verifyToken(instance, _token);
+    _instance = instance;
+  }
+
+  /// Метод, возвращающий название устройства
+  Future<String?> get deviceName {
+    throw UnimplementedError('deviceName() has not been implemented.');
+  }
+}
+Общий-пакет (flutter_device)
+Плагин flutter_device будет основным, именно его следует подключать к 
+проекту и использовать. Flutter дает возможность подключить пакет к 
+проекту и, в зависимости от платформы, автоматически будет выбрана нужная 
+реализация для платформы при сборке.
+
+Структура пакета flutter_device:
+
+└── flutter_device
+    ├── lib
+    │   └── flutter_device.dart
+    └── pubspec.yaml
+В файле pubspec.yaml подключаются платформо-зависимые пакеты, которые 
+будут использоваться в указанной платформе. Один из пакетов предназначен 
+для платформы Android (plugin_device_android) и три для платформы ОС 
+Аврора (dart_package_device, ffi_plugin_device, plugin_device). Все 
+плагины выполняют одну задачу — получение модели устройства. Для платформы 
+ОС Аврора пакеты реализованы тремя типами плагинов (Dart package, Plugin 
+package, FFI Plugin package), чтобы подключить один из них, требуется 
+указать его название в параметре default_package.
+
+flutter:
+  plugin:
+    platforms:
+      aurora:
+        default_package: dart_package_device # ffi_plugin_device или 
+plugin_device
+      android:
+        default_package: plugin_device_android
+В данной реализации общий-пакет flutter_device состоит из одного класса, 
+использующего шаблон проектирования «Одиночка» (Singleton).
+
+Файл flutter_device/lib/flutter_device.dart:
+
+class FlutterDevice {
+
+  /// Фабричный конструктор
+  factory FlutterDevice() {
+    _singleton ??= FlutterDevice._();
+    return _singleton!;
+  }
+
+  /// Приватный конструктор
+  FlutterDevice._();
+
+  /// Экземпляр класса
+  static FlutterDevice? _singleton;
+
+  /// Экземпляр DevicePlatform
+  static DevicePlatform get _platform {
+    return DevicePlatform.instance;
+  }
+
+  /// Реализация метода
+  Future<String?> get deviceName {
+    return _platform.deviceName;
+  }
+}
+Пакет Android (plugin_device_android)
+Плагин Android демонстрирует взаимодействие пакетов для разных платформ. 
+Для этого при сборке приложения на Android следует указать плагин 
+plugin_device_android в зависимостях для общего-пакета flutter_device.
+
+Структура пакета plugin_device_android:
+
+└── android
+    └── plugin_device_android
+        ├── android
+        │   ├── build.gradle
+        │   ├── local.properties
+        │   ├── plugin_device_android_android.iml
+        │   ├── settings.gradle
+        │   └── src
+        │       └── main
+        │           ├── AndroidManifest.xml
+        │           └── kotlin
+        │               └── ru
+        │                   └── auroraos
+        │                       └── plugin_device_android
+        │                           └── PluginDeviceAndroidPlugin.kt
+        ├── lib
+        │   ├── plugin_device_android.dart
+        │   └── plugin_device_android_method_channel.dart
+        └── pubspec.yaml
+В pubspec.yaml пакета к платформе Android указаны package — java/kotlin 
+пакет платформо‑зависимого плагина и pluginClass — платформо‑зависимый 
+класс, наследуемый от класса FlutterPlugin, позволяющего разработчикам 
+Flutter взаимодействовать с хост‑платформой.
+
+Файл packages/android/plugin_device_android/PluginDeviceAndroidPlugin.kt:
+
+class PluginDeviceAndroidPlugin : FlutterPlugin, MethodCallHandler {
+    /**
+     * MethodChannel обеспечивает связь между Flutter и родным Android.
+     * Эта локальная ссылка служит для регистрации плагина в Flutter 
+Engine
+     * и отмены его регистрации, когда Flutter Engine отсоединен от 
+Activity.
+     */
+    private lateinit var channel: MethodChannel
+
+    /**
+     * Инициализация [MethodChannel].
+     */
+    override fun onAttachedToEngine(flutterPluginBinding: 
+FlutterPlugin.FlutterPluginBinding) {
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, 
+"plugin_device_android")
+        channel.setMethodCallHandler(this)
+    }
+
+    /**
+     * Метод onMethodCall будет выполняться при вызове MethodChannel из 
+Dart-плагина.
+     * По названию передаваемому из плагина можно вызвать нужный 
+платформо-зависимый метод.
+     */
+    override fun onMethodCall(call: MethodCall, result: Result) {
+        if (call.method == "getDeviceName") {
+            result.success("${android.os.Build.BRAND.capitalize()} 
+${android.os.Build.MODEL}")
+        } else {
+            result.notImplemented()
+        }
+    }
+
+    /**
+     * Метод onDetachedFromEngine будет выполняться при уничтожении 
+FlutterEngine,
+     * либо при вызове PluginRegistry.remove
+     */
+    override fun onDetachedFromEngine(binding: 
+FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
+}
+В pubspec.yaml параметр dartPluginClass — класс Dart реализующий 
+платформ-интерфейс device_platform_interface.
+
+Файл 
+packages/android/plugin_device_android/lib/plugin_device_android.dart:
+
+class PluginDeviceAndroid extends DevicePlatform {
+  /// Метод, который выполнится при старте приложения
+  /// В этом методе можно установить платформо-зависимый плагин
+  static void registerWith() {
+    DevicePlatform.instance = MethodChannelPluginDeviceAndroid();
+  }
+
+  /// Реализация метода интерфейса [DevicePlatform]
+  @override
+  Future<String?> get deviceName => DevicePlatform.instance.deviceName;
+}
+Метод registerWith является обязательным для класса, указанного как 
+dartPluginClass. Метод выполняется при старте приложения и позволяет 
+задать нужный плагин общему-пакету flutter_device. Для взаимодействия 
+рассматриваемого плагина plugin_device_android с его платформо-зависимой 
+частью создается MethodChannel с общим ключом. В данном плагине ключом 
+является строка plugin_device_android, она указывается при инициализации 
+канала методов.
+
+Файл 
+packages/android/plugin_device_android/lib/plugin_device_android_method_channel.dart:
+
+/// Реализация [PluginDevicePlatform], которая использует каналы методов.
+class MethodChannelPluginDeviceAndroid extends DevicePlatform {
+  /// Канал метода, используемый для взаимодействия с собственной 
+платформой.
+  @visibleForTesting
+  final methodChannel = const MethodChannel('plugin_device_android');
+
+  /// Реализация метода получения названия устройства
+  /// getDeviceName — название метода, который можно проверить
+  /// в платформо-зависимой части плагина
+  @override
+  Future<String?> get deviceName async {
+    return await methodChannel.invokeMethod<String>('getDeviceName');
+  }
+}
+Пакет ОС Аврора «Dart package» (dart_package_device)
+На платформе ОС Аврора для реализации плагина получения названия модели 
+устройства можно использовать Device Info API. Для этого нужно выполнить 
+запрос в D-Bus, используя пакет Dart dbus. Пакет dbus — нативная 
+клиентская реализация D-Bus для Dart. С его помощью можно реализовать 
+пакет Dart для ОС Аврора, ни строчки не написав на C++.
+
+Структура пакета dart_package_device:
+
+└── aurora
+    └── dart_package_device
+        ├── lib
+        │   ├── dart_package_device.dart
+        │   └── ru_omp_device_info_features.dart
+        ├── ru.omp.deviceinfo.Features.xml
+        └── pubspec.yaml
+Пакет dbus позволяет на основе xml-файла с описанием интерфейса D-Bus 
+генерировать Dart-класс, который позволит выполнить доступные методы.
+
+Файл packages/aurora/dart_package_device/ru.omp.deviceinfo.Features.xml:
+
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 
+1.0//EN"
+        "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="ru.omp.deviceinfo.Features">
+        <method name="getDeviceModel">
+            <arg type="s" direction="out"/>
+        </method>
+    </interface>
+</node>
+Выполнить генерацию можно командой:
+
+$ dart-dbus generate-remote-object ./ru.omp.deviceinfo.Features.xml \  
+-o lib/ru_omp_device_info_features.dart
+Результат генерации c файла ru.omp.deviceinfo.Features.xml следует 
+рассматривать, как отправную точку для реализации.
+
+Файл 
+packages/aurora/dart_package_device/lib/ru_omp_device_info_features.dart:
+
+class RuOmpDeviceinfoFeatures extends DBusRemoteObject {
+  RuOmpDeviceinfoFeatures(
+      DBusClient client, String destination, DBusObjectPath path)
+      : super(client, name: destination, path: path);
+
+  /// Вызов ru.omp.deviceinfo.Features.getDeviceModel()
+  Future<String> callGetDeviceModel(
+      {bool noAutoStart = false,
+      bool allowInteractiveAuthorization = false}) async {
+    var result = await callMethod(
+        'ru.omp.deviceinfo.Features', 'getDeviceModel', [],
+        replySignature: DBusSignature('s'),
+        noAutoStart: noAutoStart,
+        allowInteractiveAuthorization: allowInteractiveAuthorization);
+    return result.returnValues[0].asString();
+  }
+}
+Теперь можно реализовать интерфейс device_platform_interface и в методе 
+registerWith указать пакет dart_package_device, как платформо-зависимый 
+плагин.
+
+Файл packages/aurora/dart_package_device/lib/dart_package_device.dart:
+
+/// Метод, который выполнится при старте приложения
+/// В этом методе можно установить платформо-зависимый плагин
+static void registerWith() {
+  DevicePlatform.instance = DartPackageDevice();
+}
+
+/// Реализация метода интерфейса [DevicePlatform]
+@override
+Future<String?> get deviceName async {
+  // Инициализация клиента D-Bus
+  final client = DBusClient.session();
+
+  // Инициализация объекта
+  final features = RuOmpDeviceinfoFeatures(
+    client,
+    'ru.omp.deviceinfo',
+    DBusObjectPath('/ru/omp/deviceinfo/Features'),
+  );
+
+  // Выполнение метода
+  final deviceName = await features.callGetDeviceModel();
+
+  // Закрытие клиента D-Bus
+  await client.close();
+
+  // Возвращение результата
+  return deviceName == '' ? null : deviceName;
+}
+В pubspec.yaml плагина dart_package_device следует указать dartPluginClass 
+для того, чтобы с помощью метода registerWith прошла регистрация плагина в 
+общем-плагине flutter_device при старте приложения.
+
+flutter:
+  plugin:
+    platforms:
+      aurora:
+        dartPluginClass: DartPackageDevice
+Пакет ОС Аврора «Plugin package» (plugin_device)
+Плагин для ОС Аврора не сильно отличается от плагина для Android. 
+Исключением является платформо-зависимая часть, которая написана будет на 
+С++ с использованием Qt.
+
+Структура пакета plugin_device:
+
+└── aurora
+    └── plugin_device
+        ├── aurora
+        │   ├── CMakeLists.txt
+        │   ├── include
+        │   │   └── plugin_device
+        │   │       └── plugin_device_plugin.h
+        │   └── plugin_device_plugin.cpp
+        ├── lib
+        │   ├── plugin_device.dart
+        │   └── plugin_device_method_channel.dart
+        └── pubspec.yaml
+В pubspec.yaml плагина plugin_device нужно указать pluginClass и 
+dartPluginClass.
+
+flutter:
+  plugin:
+    platforms:
+      aurora:
+        pluginClass: PluginDevicePlugin
+        dartPluginClass: PluginDevice
+PluginDevicePlugin — C++ класс реализующий PluginInterface пакета 
+flutter-embedder.
+
+Файл 
+packages/aurora/plugin_device/aurora/include/plugin_device/plugin_device_plugin.h:
+
+#include <flutter/plugin-interface.h>
+#include <plugin_device/globals.h>
+
+class PLUGIN_EXPORT PluginDevicePlugin final : public PluginInterface
+{
+public:
+    void RegisterWithRegistrar(PluginRegistrar &registrar) override;
+
+private:
+    void onMethodCall(const MethodCall &call);
+    void onGetDeviceName(const MethodCall &call);
+    void unimplemented(const MethodCall &call);
+};
+Файл packages/aurora/plugin_device/aurora/plugin_device_plugin.cpp:
+
+#include <plugin_device/plugin_device_plugin.h>
+#include <flutter/method-channel.h>
+#include <QtDBus/QtDBus>
+
+/**
+ * Регистрация [MethodChannel].
+ */
+void PluginDevicePlugin::RegisterWithRegistrar(PluginRegistrar &registrar)
+{
+    registrar.RegisterMethodChannel("plugin_device",
+                                    MethodCodecType::Standard,
+                                    [this](const MethodCall &call) { 
+this->onMethodCall(call); });
+}
+
+/**
+ * Метод onMethodCall будет выполняться при вызове MethodChannel из 
+Dart-плагина.
+ * По названию, передаваемому из плагина, можно вызвать нужный 
+платформо-зависимый метод.
+ */
+void PluginDevicePlugin::onMethodCall(const MethodCall &call)
+{
+    const auto &method = call.GetMethod();
+    if (method == "getDeviceName") {
+        onGetDeviceName(call);
+        return;
+    }
+    unimplemented(call);
+}
+
+/**
+ * Платформо-зависимый метод, получающий название устройства
+ */
+void PluginDevicePlugin::onGetDeviceName(const MethodCall &call)
+{
+    if (!QDBusConnection::sessionBus().isConnected()) {
+        call.SendSuccessResponse(nullptr);
+        return;
+    }
+    QDBusInterface iface("ru.omp.deviceinfo",
+        "/ru/omp/deviceinfo/Features",
+        "",
+        QDBusConnection::sessionBus()
+    );
+    if (iface.isValid()) {
+        QDBusReply<QString> reply = iface.call("getDeviceModel");
+        if (reply.isValid()) {
+            call.SendSuccessResponse(reply.value().toStdString());
+            return;
+        }
+    }
+    call.SendSuccessResponse(nullptr);
+}
+
+/**
+ * Метод возвращающий [nullptr], если запрашиваемый метод не найден
+ */
+void PluginDevicePlugin::unimplemented(const MethodCall &call)
+{
+    call.SendSuccessResponse(nullptr);
+}
+PluginDevice — Dart‑класс, реализующий device_platform_interface и 
+устанавливающий при выполнении метода registerWith нужный экземпляр для 
+взаимодействия с платформо‑зависимой частью плагина.
+
+Файл packages/aurora/plugin_device/lib/plugin_device.dart:
+
+class PluginDevice extends DevicePlatform {
+  /// Метод, который выполнится при старте приложения
+  /// В этом методе можно установить платформо-зависимый плагин
+  static void registerWith() {
+    DevicePlatform.instance = MethodChannelPluginDevice();
+  }
+
+  /// Реализация метода интерфейса [DevicePlatform]
+  @override
+  Future<String?> get deviceName => DevicePlatform.instance.deviceName;
+}
+MethodChannel класс плагина отличается от подобного класса для Android 
+только названием и ключом для взаимодействия с платформо-зависимой частью.
+
+Файл packages/aurora/plugin_device/lib/plugin_device_method_channel.dart:
+
+/// Реализация [PluginDevicePlatform], которая использует каналы методов
+class MethodChannelPluginDevice extends DevicePlatform {
+  /// Канал метода, используемый для взаимодействия с собственной 
+платформой
+  @visibleForTesting
+  final methodChannel = const MethodChannel('plugin_device');
+
+  /// Реализация метода получения названия устройства
+  /// getDeviceName — название метода, который можно проверить
+  /// в платформо-зависимой части плагина
+  @override
+  Future<String?> get deviceName async {
+    return await methodChannel.invokeMethod<String>('getDeviceName');
+  }
+}
+Пакет ОС Аврора «FFI Plugin package» (ffi_plugin_device)
+Еще одним вариантом реализации пакета для ОС Аврора является плагин FFI 
+Plugin package, который для реализации получения названия модели 
+устройства использует Dart FFI.
+
+Структура пакета ffi_plugin_device:
+
+└── aurora
+    └── ffi_plugin_device
+        ├── aurora
+        │   └── CMakeLists.txt
+        ├── ffigen.yaml
+        ├── lib
+        │   ├── ffi_plugin_device_bindings_generated.dart
+        │   └── ffi_plugin_device.dart
+        ├── pubspec.yaml
+        └── src
+            ├── CMakeLists.txt
+            ├── ffi_plugin_device.cpp
+            └── ffi_plugin_device.h
+Для генерации привязок FFI можно использовать плагин ffigen. Пакет, 
+предоставляющий утилиты для работы с кодом интерфейса внешних функций, 
+называется ffi. В pubspec.yaml плагина нужно добавить зависимости и 
+активировать ffiPlugin для платформы ОС Аврора.
+
+dependencies:
+  ffi: ^2.0.2
+
+dev_dependencies:
+  ffigen: ^7.2.7
+
+flutter:
+  plugin:
+    platforms:
+      aurora:
+        ffiPlugin: true
+        dartPluginClass: FFIPluginDevice
+Для генерации привязок нужно добавить файл ffigen.yaml в корень плагина.
+
+Файл packages/aurora/ffi_plugin_device/ffigen.yaml:
+
+name: PluginDeviceBindings
+llvm-path:
+  - '/usr/lib/llvm-14/lib/libclang.so' # Ubuntu 22.04
+  - '/usr/lib/llvm-15/lib/libclang.so' # Ubuntu 23.04
+description: |
+  Bindings for `src/ffi_plugin_device.h`.
+output: 'lib/ffi_plugin_device_bindings_generated.dart'
+headers:
+  entry-points:
+    - 'src/ffi_plugin_device.h'
+  include-directives:
+    - 'src/ffi_plugin_device.h'
+comments:
+  style: any
+  length: full
+В файле ffigen.yaml указываются хедеры нужных библиотек. В данном случае 
+библиотека лежит в папке src, которая получает название модели устройства 
+с помощью QtDBus.
+
+Файл packages/aurora/ffi_plugin_device/src/ffi_plugin_device.h:
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+char *getDeviceName();
+
+#ifdef __cplusplus
+}
+#endif
+Файл packages/aurora/ffi_plugin_device/src/ffi_plugin_device.cpp:
+
+#include <QStandardPaths>
+#include <QtDBus/QtDBus>
+
+#include "ffi_plugin_device.h"
+
+char *getDeviceName()
+{
+    QString deviceName = "";
+    if (QDBusConnection::sessionBus().isConnected()) {
+        QDBusInterface iface("ru.omp.deviceinfo",
+            "/ru/omp/deviceinfo/Features",
+            "",
+            QDBusConnection::sessionBus()
+        );
+        if (iface.isValid()) {
+            QDBusReply<QString> reply = iface.call("getDeviceModel");
+            if (reply.isValid()) {
+                deviceName = reply.value();
+            }
+        }
+    }
+    return deviceName.toUtf8().data();
+}
+Выполнить генерацию FFI-привязок можно следующей командой, выполнив её из 
+корня плагина (например, packages/aurora/ffi_plugin_device):
+
+flutter-aurora pub run ffigen --config ffigen.yaml
+В папке lib будет сгенерирован файл 
+ffi_plugin_device_bindings_generated.dart.
+
+Файл 
+packages/aurora/ffi_plugin_device/lib/ffi_plugin_device_bindings_generated.dart:
+
+import 'dart:ffi' as ffi;
+
+/// Bindings for `src/ffi_plugin_device.h`.
+class PluginDeviceBindings {
+  /// Holds the symbol lookup function.
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String 
+symbolName)
+      _lookup;
+
+  /// The symbols are looked up in [dynamicLibrary].
+  PluginDeviceBindings(ffi.DynamicLibrary dynamicLibrary)
+      : _lookup = dynamicLibrary.lookup;
+
+  /// The symbols are looked up with [lookup].
+  PluginDeviceBindings.fromLookup(
+      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
+          lookup)
+      : _lookup = lookup;
+
+  ffi.Pointer<ffi.Char> getDeviceName() {
+    return _getDeviceName();
+  }
+
+  late final _getDeviceNamePtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+          'getDeviceName');
+  late final _getDeviceName =
+      _getDeviceNamePtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
+}
+Теперь можно создать класс FFIPluginDevice, реализующий интерфейс 
+device_platform_interface.
+
+Файл packages/aurora/ffi_plugin_device/lib/ffi_plugin_device.dart:
+
+class FFIPluginDevice extends DevicePlatform {
+  /// Метод, который выполнится при старте приложения
+  /// В этом методе можно установить платформо-зависимый плагин
+  static void registerWith() {
+    DevicePlatform.instance = FFIPluginDevice();
+  }
+
+  /// Привязки к нативным функциям в [_dylib].
+  final PluginDeviceBindings _bindings = PluginDeviceBindings(
+    DynamicLibrary.open('libffi_plugin_device.so'),
+  );
+
+  /// Реализация метода интерфейса [DevicePlatform]
+  @override
+  Future<String?> get deviceName async {
+    // Получение deviceName
+    final deviceName = 
+_bindings.getDeviceName().cast<Utf8>().toDartString();
+    // Возврат результата
+    return deviceName == '' ? null : deviceName;
+  }
+}
+Подключение плагина к приложению «Hello World»
+Каждый плагин при его генерации из готовых шаблонов имеет директорию с 
+приложением-примером <project>/example с подключенным к нему 
+разрабатываемым пакетом. Приложение позволяет продемонстрировать работу 
+разрабатываемого пакета. Такой же пример есть и в общем плагине 
+flutter_device, он может продемонстрировать работу пакета. Собрать 
+приложение на ОС Аврора можно следующей командой в одном из доступных 
+режимов (--debug, --profile, --release):
+
+$ flutter-aurora build aurora --release
+
+Building Aurora application...                                          
+
+┌─ Result ───────────────────────────────────────────────────────────────────────────────┐
+│ 
+./build/aurora/arm/release/RPMS/ru.auroraos.flutter_device_example-0.1.0-1.armv7hl.rpm 
+│
+└────────────────────────────────────────────────────────────────────────────────────────┘
+Далее RPM-пакет следует подписать и установить на устройство с ОС Аврора.
+
+В приложении-примере идущем в комплекте с плагином подключение пакета к 
+приложению осуществлено локально:
+
+dependencies:   
+	flutter_device:  
+		path: ../ # Здесь указан путь к директории с плагином
+В приложении Hello World предлагается подключить плагин flutter_device 
+через Git следующим образом:
+
+dependencies:
+  flutter_device:
+    git:
+      url: git@gitlab.com:omprussia/demo-flutter-packages.git
+      ref: packages
+      path: flutter_device
+Подробная информация об этом способе подключения плагинов доступна в 
+документации Flutter Using packages.
+
+Заключение
+Flutter доступен теперь и для ОС Аврора. Написание приложений, пакетов, 
+плагинов не сильно отличается от других платформ. При этом следует 
+учитывать версию Flutter и доступность платформо‑зависимых пакетов. Мы 
+предлагаем присоединится к развитию Flutter в ОС Аврора — проект доступен 
+по ссылке.
+
+Предложения и доработки в виде Merge Request приветствуются. 
+Присоединяйтесь!
