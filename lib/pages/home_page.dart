@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_recipe_app/components/articles_view.dart';
+import 'package:flutter_recipe_app/components/square_loading_indicator.dart';
 import 'package:flutter_recipe_app/models/article_model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -19,20 +22,36 @@ class HomePageState extends State<HomePage> {
 
   List<String>? content;
 
-  Future<void> loadContent() async {
+  double? loadingSeed;
+
+  Future<void> loadContentFuture(double? loadingSeed) async {
+    setState(() {
+      content = null;
+    });
     final fileName = currentArticle.articleName;
+    await Future.delayed(Duration(seconds: 3));
     final contentString =
         await rootBundle.loadString('assets/articles/$fileName.txt');
-    setState(() {
-      content = contentString.split('\n\n');
-    });
+    if (loadingSeed == this.loadingSeed) {
+      // needed in case of concurrent loadContentFuture
+      setState(() {
+        content = contentString.split('\n\n');
+      });
+    }
+  }
+
+  void loadContent() {
+    loadingSeed = Random().nextDouble();
+    loadContentFuture(loadingSeed);
   }
 
   List<Widget> contentWidgets() {
     if (content == null) {
       return [
         SizedBox(height: 16),
-        CircularProgressIndicator.adaptive(),
+        Center(
+          child: SquareLoadingIndicator(color: Colors.blueGrey),
+        ),
       ];
     }
     return content!
