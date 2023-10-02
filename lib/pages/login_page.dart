@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_recipe_app/pages/home_page.dart';
+import 'package:flutter_recipe_app/uikit/uikit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatefulWidget {
@@ -39,7 +40,10 @@ class LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.all(32),
         child: LayoutBuilder(
@@ -68,6 +72,10 @@ class LoginPageState extends State<LoginPage>
                               child: SvgPicture.asset(
                                 height: avaliableSize,
                                 'assets/svg/logo.svg',
+                                colorFilter: ColorFilter.mode(
+                                  theme.colorScheme.accent,
+                                  BlendMode.modulate,
+                                ),
                               ),
                             ),
                           ),
@@ -91,19 +99,20 @@ class LoginPageState extends State<LoginPage>
                     const SizedBox(height: 32),
                     GestureDetector(
                       onTap: () => logIn(context),
-                      child: const SizedBox(
+                      child: SizedBox(
                         height: 48,
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(24)),
-                            color: Colors.black,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(24)),
+                            color: theme.colorScheme.accent,
                           ),
                           child: Center(
                             child: Text(
                               'Log in',
                               style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.white,
+                                color: theme.colorScheme.text,
                               ),
                             ),
                           ),
@@ -113,14 +122,14 @@ class LoginPageState extends State<LoginPage>
                     const SizedBox(height: 4),
                     GestureDetector(
                       onTap: () => signIn(context),
-                      child: const SizedBox(
+                      child: SizedBox(
                         height: 48,
                         child: Center(
                           child: Text(
                             'Sign in',
                             style: TextStyle(
                               fontSize: 18,
-                              color: Colors.black,
+                              color: AppTheme.of(context).colorScheme.accent,
                             ),
                           ),
                         ),

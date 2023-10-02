@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_recipe_app/components/articles_view.dart';
 import 'package:flutter_recipe_app/components/square_loading_indicator.dart';
 import 'package:flutter_recipe_app/models/article_model.dart';
+import 'package:flutter_recipe_app/uikit/uikit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
@@ -50,7 +51,7 @@ class HomePageState extends State<HomePage> {
       return [
         SizedBox(height: 16),
         Center(
-          child: SquareLoadingIndicator(color: Colors.blueGrey),
+          child: SquareLoadingIndicator(),
         ),
       ];
     }
@@ -60,8 +61,9 @@ class HomePageState extends State<HomePage> {
                 padding: EdgeInsets.all(8),
                 child: Text(
                   paragraph,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
+                    color: AppTheme.of(context).colorScheme.text,
                   ),
                 ),
               ),
@@ -78,7 +80,10 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.colorScheme.background,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           scrollController.animateTo(
@@ -87,6 +92,7 @@ class HomePageState extends State<HomePage> {
             curve: Curves.decelerate,
           );
         },
+        backgroundColor: theme.colorScheme.accent,
         child: const Icon(Icons.keyboard_arrow_up),
       ),
       body: SafeArea(
@@ -100,9 +106,10 @@ class HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Articles',
-                      style: TextStyle(fontSize: 22),
+                      style: TextStyle(
+                          fontSize: 22, color: theme.colorScheme.text),
                     ),
                     SvgPicture.asset('assets/svg/icon-nav.svg'),
                   ],

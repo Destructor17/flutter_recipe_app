@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipe_app/uikit/uikit.dart';
 
 class SquareLoadingIndicator extends StatefulWidget {
-  const SquareLoadingIndicator({required this.color, super.key});
-  final Color color;
+  const SquareLoadingIndicator({super.key});
 
   @override
   State<StatefulWidget> createState() => SquareLoadingIndicatorState();
@@ -55,7 +55,7 @@ class SquareLoadingIndicatorState extends State<SquareLoadingIndicator>
       (index) => Container(
         height: squareSize,
         width: squareSize,
-        color: widget.color,
+        color: AppTheme.of(context).colorScheme.accent,
       ),
     );
 

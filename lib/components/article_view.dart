@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_recipe_app/models/article_model.dart';
+import 'package:flutter_recipe_app/uikit/uikit.dart';
 
 class ArticleView extends StatelessWidget {
   const ArticleView({required this.article, super.key});
@@ -35,7 +36,7 @@ class ArticleView extends StatelessWidget {
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),
-              color: Colors.blueGrey,
+              color: AppTheme.of(context).colorScheme.accent,
             ),
             child: Padding(
               padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 8),
