@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_recipe_app/pages/home_page.dart';
+import 'package:flutter_recipe_app/pages/home/home_page.dart';
 import 'package:flutter_recipe_app/uikit/uikit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
