@@ -20,6 +20,8 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   HomeBloc bloc = HomeBloc();
 
+  int? currentIndex;
+
   ScrollController scrollController = ScrollController();
 
   @override
@@ -68,9 +70,13 @@ class HomePageState extends State<HomePage> {
               ArticlesView(
                 articles: exampleArticles,
                 onSwipe: (articleIndex) {
+                  if (currentIndex == articleIndex) {
+                    return;
+                  }
                   bloc.add(HomeEvent.changeArticle(
                     article: exampleArticles[articleIndex],
                   ));
+                  currentIndex = articleIndex;
                 },
                 key: const PageStorageKey<String>('ArticlesView'),
               ),

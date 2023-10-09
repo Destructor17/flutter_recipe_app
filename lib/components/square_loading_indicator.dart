@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_recipe_app/uikit/uikit.dart';
 
@@ -11,6 +14,7 @@ class SquareLoadingIndicator extends StatefulWidget {
 class SquareLoadingIndicatorState extends State<SquareLoadingIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController animationController = AnimationController(
+    value: Random().nextDouble(),
     duration: const Duration(seconds: 2),
     vsync: this,
   )..repeat();
